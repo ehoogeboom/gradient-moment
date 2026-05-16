@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gradient-moment"
+version = "0.2.0"
+description = "PyTorch implementation of the Gradient Moment metric for evaluating discrete diffusion / generative models (arXiv:2603.20155)."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+authors = [{ name = "Emiel Hoogeboom" }]
+keywords = ["diffusion", "distillation", "evaluation", "generative-models", "pytorch"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "torch>=2",
+    "numpy",
+]
+
+[project.optional-dependencies]
+huggingface = [
+    # 5.x ships a `torch.library.custom_op` schema that breaks with torch<=2.4.
+    "transformers>=4.40,<5",
+]
+test = [
+    "pytest>=7",
+]
+dev = [
+    "gradient-moment[test,huggingface]",
+]
+
+[project.urls]
+Paper = "https://arxiv.org/abs/2603.20155"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/gradient_moment"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning"]
