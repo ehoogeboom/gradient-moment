@@ -57,6 +57,31 @@ catches the collapse (+7.0).
 dropping monotonically below `ppl_data` (the gameability finding); GM reverses
 direction, flagging mode-collapse.
 
+### Failure mode: reference == generator (n=64)
+
+When the model under evaluation IS the reference, GM degenerates by
+construction: `E_{x~p_θ}[∇_θ log p_θ(x)] = 0` (score-function identity), so any
+distribution close to `p_θ` produces a small μ_g and hence small GM. The
+following sweep used **gpt2-large** sampling at temperature T as the
+"samples" side, with **gpt2-large** also as the reference.
+
+| T | centered_gm | ppl_samples | tok_entropy_samples |
+|---|---|---|---|
+| 0.30 | **0.472 ± 0.071** | **1.15 ± 0.01** | **3.02 ± 0.08** |
+| 0.50 | 0.540 ± 0.079 | 1.32 ± 0.04 | 3.29 ± 0.10 |
+| 0.70 | 0.668 ± 0.072 | 2.06 ± 0.07 | 4.06 ± 0.10 |
+| 1.00 | 0.596 ± 0.072 | 7.52 ± 0.34 | 5.15 ± 0.04 |
+
+As T drops (sharper, more mode-collapsed), `ppl_samples` collapses to 1.15
+(far below `ppl_data` ≈ 14.5 — the canonical PPL gameability), `tok_entropy`
+drops to 3.0 (vs data ≈ 5.45), and `centered_gm` **decreases** rather than
+rises. The mode-collapsed regime literally produces the smallest GM in this
+sweep.
+
+Takeaway: GM can still be fooled — just harder than PPL. The attacker has
+to concentrate on critical points of `p_θ` (where the score vanishes), not
+merely on high-probability tokens.
+
 ## Install
 
 ```bash
